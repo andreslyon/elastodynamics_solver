@@ -25,33 +25,6 @@ def F_ricker_wavelet(w_p, w):
 
 # ================= PULSE CLASSES  ================= #
 
-class RickerPulse(UserExpression):
-  def __init__(self, t, omega, amplitude, **kwargs):
-    self.t     = t
-    self.omega = omega
-    self.amplitude = amplitude
-    super().__init__(**kwargs)
-  
-  def eval(self, values, x):
-    # Ricker pulse Parameters
-    r  = ((x[0] - xc)**2 + (x[1] - yc)**2)**0.5
-    
-    u  = self.omega * self.t - 3*pow(6,0.5)
-    Sp = (1.0 - (r / rd) ** 2) ** 3
-
-    #if self.t <= 6 * pow(6, 0.5) / self.omega:
-
-    Tp = ((0.25 * pow(u, 2) - 0.5) * exp(-0.25 * pow(u, 2)) \
-         -13 * exp(-13.5)) / (0.5 + 13 * exp(-13.5))
-    #else:
-   #  Tp = 0
-
-    values[0] = self.amplitude * physical_parameters.amplitude * Tp * Sp * (x[0] - xc) / r
-    values[1] = self.amplitude * physical_parameters.amplitude * Tp * Sp * (x[1] - yc) / r
-
-  def value_shape(self):
-    return (2,)
-
 
 class ModifiedRickerPulse(UserExpression):
   def __init__(self, t, omega, amplitude, center=0, **kwargs):
@@ -75,6 +48,11 @@ class ModifiedRickerPulse(UserExpression):
 
   def value_shape(self):
     return (2,)
+  
+  def pulse_info(self):
+    info = "Pulse Type: Modified Ricker Pulse\n" + "Peak frequency [rad/s]: {}\n".format(self.omega) + "Amplitude [_]: {}\n".format(self.amplitude) + "center [m]: {}\n".format(self.center)
+    return info
+
 
 
 class ClassicRickerPulse(UserExpression):
@@ -97,6 +75,10 @@ class ClassicRickerPulse(UserExpression):
   def value_shape(self):
     return (2,)
 
+  def pulse_info(self):
+    info = "Pulse Type: Classic Ricker Pulse\n" + "Peak frequency [rad/s]: {}\n".format(self.omega) + "Amplitude [_]: {}\n".format(self.amplitude) + "center [m]: {}\n".format(self.center)
+    return info
+
 
 class Sine(UserExpression):
   def __init__(self, t, freq, amplitude, **kwargs):
@@ -107,7 +89,7 @@ class Sine(UserExpression):
 
   def eval(values, x):
     values[0] = 0
-    values[1] = self.amplitude * p.sin(self.omega_p * t)
+    values[1] = self.amplitude * p.sin(self.freq * t)
 
 
   def value_shape(self):

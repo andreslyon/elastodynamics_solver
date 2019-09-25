@@ -58,17 +58,17 @@ if __name__ == "__main__":
 
     max_velocity = max([material.c_p for material in materials])
     max_omega_p = max(omega_p_list)
-    print("omega p : ", max_omega_p)
+    #print("omega p : ", max_omega_p)
     stable_hx = stable_dx(max_velocity, max_omega_p)
-    nx = 120#int(Lx / stable_hx) + 1
-    ny = 115#int(Ly / stable_hx) + 1
+    nx = int(Lx / stable_hx) + 1
+    ny = int(Ly / stable_hx) + 1
     mesh = mesh_generator(Lx, Ly, Lpml, nx, ny)
 
 
     dt      = stable_dt(stable_hx, max_velocity)
-    print("dt is :  {}".format(dt))
-    print(stable_hx)
-    print(nx)
+    #print("dt is :  {}".format(dt))
+    #print(stable_hx)
+    #print(nx)
 
     t_end   = float(input("Enter final time [s]: "))
 
@@ -179,7 +179,8 @@ if __name__ == "__main__":
     (u, S) = TrialFunctions(W)
     (w, T) = TestFunctions(W)
 
-    g = sum([ModifiedRickerPulse(t,omega_p_list[i], amplitude_list[i],center=sources_positions[i]) for i in range(len(omega_p_list))])
+    pulses = [ModifiedRickerPulse(t,omega_p_list[i], amplitude_list[i],center=sources_positions[i]) for i in range(len(omega_p_list))] 
+    g = sum(pulses)
 
     # Define variational problem
  
@@ -208,7 +209,7 @@ if __name__ == "__main__":
     experiment_count_file.close()
 
     paraview_file_name = "experiment_n{}".format(experiment_count)
-    info_file_name = "info_n{}".format(experiment_count_file)
+    info_file_name = "{}_experiments_info/info_n{}".format(type_of_medium,experiment_count)
 
     experiment_count += 1
     experiment_count_file = open("experiment_counter",'wb')

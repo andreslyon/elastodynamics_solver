@@ -1,0 +1,33 @@
+MEDIUM PARAMETERS
+
+Material properties of try_material
+lambda = 49508.94666666665
+mu = 74263.42
+Cp = 9.487690270380176
+Cs = 5.81
+
+Material properties of try_material
+lambda = 49508.94666666665
+mu = 74263.42
+Cp = 9.487690270380176
+Cs = 5.81
+
+Material properties of try_material
+lambda = 49508.94666666665
+mu = 74263.42
+Cp = 9.487690270380176
+Cs = 5.81
+
+
+MESH
+Lx [m]= 10.0
+Lx [m]= 10.0
+Lpml [m]= 1.0
+PULSES
+
+Pulse Type: Modified Ricker Pulse
+Peak frequency [rad/s]: 6.283185307179586
+Amplitude [_]: 500.0
+center [m]: 0.0
+Final time [s]: 0.1
+Execution time [s]: 0.003524339199066162

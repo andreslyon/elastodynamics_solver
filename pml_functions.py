@@ -27,9 +27,6 @@ class alpha_1(UserExpression):
   def eval(self, values, x, **kwargs):
     values[0] = 1.0 + self.alpha_0 * pow((abs(x[0]) - 0.5 * self.Lx + abs(abs(x[0]) - 0.5 * self.Lx )) / (2 * self.Lpml), 2)
 
-  def value_shape(self):
-    return (1,)
-
 
 class alpha_2(UserExpression):
   def __init__(self, alpha_0, Ly, Lpml, **kwargs):
@@ -39,8 +36,6 @@ class alpha_2(UserExpression):
     self.Lpml = Lpml
   def eval(self, values, x, **kwargs):
     values[0] = 1.0 + self.alpha_0 * pow((-(x[1] + self.Ly) + abs(x[1] + self.Ly))/(2*self.Lpml), 2)
-  def value_shape(self):
-    return (1,)
 
 
 class beta_1(UserExpression):
@@ -52,9 +47,6 @@ class beta_1(UserExpression):
 
     def eval(self, values, x, **kwargs):
         values[0] = self.beta_0 * pow((abs(x[0]) - 0.5 * self.Lx + abs(abs(x[0]) - 0.5 * self.Lx))/(2 * self.Lpml), 2)
-    def value_shape(self):
-        return (1,)
-
 
 
 class beta_2(UserExpression):
@@ -65,5 +57,3 @@ class beta_2(UserExpression):
         self.Lpml = Lpml  
     def eval(self, values, x, **kwargs):
         values[0] = self.beta_0 * pow((-(x[1] + self.Ly) + abs(x[1] + self.Ly))/(2 * self.Lpml), 2)
-    def value_shape(self):
-            return (1,)

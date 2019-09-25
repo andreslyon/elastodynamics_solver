@@ -20,7 +20,7 @@ def soil_and_pulses_print(Lx, Lpml):
 
 def input_sources(l, Lx, character_length, n_chars):
     i = - Lx / 2 + character_length * 3.5
-    source_positions_inputs = str(input("enter position of sources: ")).split(",")
+    source_positions_inputs = str(input("enter position of sources(E.g: 0,1,2): ")).split(",")
     source_positions_inputs = [int(i) for i in source_positions_inputs]
     #print(source_positions_inputs)
     sources_positions = [7 * character_length * j + i  for j in source_positions_inputs]
@@ -28,14 +28,28 @@ def input_sources(l, Lx, character_length, n_chars):
 
 
 def save_info_oblique(file_name, materials, pulses, t_end, exec_time, h, dt, Lx, Ly, Lpml):
-    with open() as file:
+    with open(file_name,"w") as file:
         file.write("MEDIUM PARAMETERS\n")
         for material in materials:
             file.write("\n")
             file.write(material.info())
         file.write("\n\n")
 
+        file.write("MESH\n")
+        file.write("Lx [m]= {}\n".format(Lx))
+        file.write("Ly [m]= {}\n".format(Ly))
+        file.write("Lpml [m]= {}\n".format(Lpml))
+        file.write("dx [m]= {}\n".format(h))
+        
+
         file.write("PULSES\n")
+        for pulse in pulses:
+            file.write("\n")
+            file.write(pulse.pulse_info())
+
+        file.write("\nTIME\n")
+        file.write("dt [s]: {}\n".format(dt))
+
         file.write("Final time [s]: {}\n".format(t_end))
         file.write("Execution time [s]: {}\n".format(exec_time))
 
