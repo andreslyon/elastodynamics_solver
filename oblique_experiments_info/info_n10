@@ -1,0 +1,37 @@
+MEDIUM PARAMETERS
+
+Material properties of soft_clay_0
+lambda = 2660000.0
+mu = 4750000.0
+Cp = 80.0
+Cs = 50.0
+
+Material properties of soft_clay_0
+lambda = 2660000.0
+mu = 4750000.0
+Cp = 80.0
+Cs = 50.0
+
+Material properties of soft_clay_0
+lambda = 2660000.0
+mu = 4750000.0
+Cp = 80.0
+Cs = 50.0
+
+
+MESH
+Lx [m]= 8.0
+Ly [m]= 4.0
+Lpml [m]= 0.4
+dx [m]= 1.0183919550294407
+PULSES
+
+Pulse Type: Modified Ricker Pulse
+Peak frequency [rad/s]: 37.69911184307752
+Amplitude [_]: 5000.0
+center [m]: -1.0
+
+TIME
+dt [s]: 0.012729899437868009
+Final time [s]: 0.5
+Execution time [m]: 0.09945353269577026

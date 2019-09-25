@@ -26,6 +26,7 @@ if __name__ == "__main__":
     Lpml = 0.1 * min([Lx,Ly])
     n_sources, character_length, m_char = soil_and_pulses_print(Lx, Lpml)
     sources_positions = input_sources(n_sources, Lx, character_length, m_char)
+
     omega_p_list = []
     amplitude_list = []
     for i in range(len(sources_positions)):
@@ -58,6 +59,7 @@ if __name__ == "__main__":
 
     max_velocity = max([material.c_p for material in materials])
     max_omega_p = max(omega_p_list)
+
     #print("omega p : ", max_omega_p)
     stable_hx = stable_dx(max_velocity, max_omega_p)
     nx = int(Lx / stable_hx) + 1
@@ -180,6 +182,7 @@ if __name__ == "__main__":
     (w, T) = TestFunctions(W)
 
     pulses = [ModifiedRickerPulse(t,omega_p_list[i], amplitude_list[i],center=sources_positions[i]) for i in range(len(omega_p_list))] 
+    
     g = sum(pulses)
 
     # Define variational problem
@@ -208,7 +211,7 @@ if __name__ == "__main__":
     experiment_count = pickle.load(experiment_count_file)
     experiment_count_file.close()
 
-    paraview_file_name = "experiment_n{}".format(experiment_count)
+    paraview_file_name = "experiment_{}".format(experiment_count)
     info_file_name = "{}_experiments_info/info_n{}".format(type_of_medium,experiment_count)
 
     experiment_count += 1
@@ -235,7 +238,9 @@ if __name__ == "__main__":
             print("time taken til this point: {}".format(time.time()-t0))
         # Update source term
         #f.t = t
-        g.t = t
+        for pulse in pulses:
+            pulse.t = t
+        g = sum(pulses)
 
         # Assemble rhs and apply boundary condition      
         b = assemble(L)

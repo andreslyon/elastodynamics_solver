@@ -20,7 +20,7 @@ def soil_and_pulses_print(Lx, Lpml):
 
 def input_sources(l, Lx, character_length, n_chars):
     i = - Lx / 2 + character_length * 3.5
-    source_positions_inputs = str(input("enter position of sources(E.g: 0,1,2): ")).split(",")
+    source_positions_inputs = str(input("enter position of sources (E.g: 0,1,2): ")).split(",")
     source_positions_inputs = [int(i) for i in source_positions_inputs]
     #print(source_positions_inputs)
     sources_positions = [7 * character_length * j + i  for j in source_positions_inputs]
@@ -51,7 +51,7 @@ def save_info_oblique(file_name, materials, pulses, t_end, exec_time, h, dt, Lx,
         file.write("dt [s]: {}\n".format(dt))
 
         file.write("Final time [s]: {}\n".format(t_end))
-        file.write("Execution time [s]: {}\n".format(exec_time))
+        file.write("Execution time [m]: {}\n".format(exec_time))
 
 if __name__ == "__main__":
 
