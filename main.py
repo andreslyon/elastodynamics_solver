@@ -12,18 +12,18 @@ import numpy as p
 import time
 import pickle
 
-from time_integration_and_compliance import (N_dot, N_ddot, compliance, stable_dt, update)
+from time_integration_and_compliance import (N_dot, N_ddot, compliance, stable_dt, update, cfl_constant)
 from domain_and_layers import (mesh_generator, stable_dx, ObliqueLayers, MultiLayer, TwoLayeredProperties, Dirichlet, Circle)
 from materials import (Material, MaterialFromVelocities, read_materials, print_materials)
 from user_interface import (soil_and_pulses_print, input_sources, save_info_oblique)
 from pml_functions import (alpha_0, alpha_1, alpha_2, beta_0, beta_1, beta_2)
-from pulses import (ClassicRickerPulse, ModifiedRickerPulse, Sine)
+from pulses import (ClassicRickerPulse, ModifiedRickerPulse, Cosine)
 
 if __name__ == "__main__":
         
     Lx = float(input("Enter Lx [m]: "))
     Ly = float(input("Enter Ly [m]: "))
-    Lpml = 0.1 * min([Lx,Ly])
+    Lpml = Lx / 10
     n_sources, character_length, m_char = soil_and_pulses_print(Lx, Lpml)
     sources_positions = input_sources(n_sources, Lx, character_length, m_char)
 
@@ -40,7 +40,6 @@ if __name__ == "__main__":
 
     for _ in range(3):
         material_id = int(input("Enter id od material: "))
-        print(materials_data[material_id])
         materials.append(MaterialFromVelocities(*materials_data[material_id]))
     materials[0].print()
     max_omega_p = max(omega_p_list)
@@ -58,19 +57,28 @@ if __name__ == "__main__":
     # ================= MESH  ================= #
 
     max_velocity = max([material.c_p for material in materials])
+    min_velocity = min([material.c_s for material in materials])
+
     max_omega_p = max(omega_p_list)
 
     #print("omega p : ", max_omega_p)
-    stable_hx = stable_dx(max_velocity, max_omega_p)
+    stable_hx = stable_dx(min_velocity, max_omega_p)
+    
     nx = int(Lx / stable_hx) + 1
+    print(nx)
+    #nx = max(nx, 70)
     ny = int(Ly / stable_hx) + 1
+    #ny = max(ny, 70)
     mesh = mesh_generator(Lx, Ly, Lpml, nx, ny)
+    #used_hx = Lx / nx
 
+    dt      =  stable_dt(stable_hx, max_velocity) #* 0.1
+    print("dt: ", dt)
+    print("hx: ", stable_hx)
+    #print("used hx: ", used_hx)
+    print("nx: ", nx)
+    print("ACTUAL CFL: {}\n".format(cfl_constant(max_velocity,dt,stable_hx)))
 
-    dt      = stable_dt(stable_hx, max_velocity)
-    #print("dt is :  {}".format(dt))
-    #print(stable_hx)
-    #print(nx)
 
     t_end   = float(input("Enter final time [s]: "))
 
@@ -113,7 +121,7 @@ if __name__ == "__main__":
     V = W.sub(0).collapse()
     M = W.sub(1).collapse()
     
-    V_r = 10
+    V_r = max_velocity#10
     car_dim = 0.1
     m = 2 
     R = 10e-8
@@ -258,16 +266,23 @@ if __name__ == "__main__":
         #  time_array_x, time_array_y = time_to_pml_border(u_s_0, u0, time_array_x,time_array_y, t, Lx, Ly, n)
         # Save solution to XDMF file format
         
-        xdmf_file.write(u, t)
+        #xdmf_file.write(u, t)
         if rec_counter % 2 == 0:
 
             pvd << (u0, t)
         rec_counter += 1
+        energy = inner(u, u) * dx
+        E = assemble(energy)
+        print("E = ",E)
+
     t_f = (time.time() - t0) / 60
+
     save_info_oblique(info_file_name, materials, pulses, 
                       t_end, t_f, stable_hx, dt, Lx, Ly, Lpml)
 
-
+    print('\007')
+    print('\007')
+    print('\007')
         
 
 

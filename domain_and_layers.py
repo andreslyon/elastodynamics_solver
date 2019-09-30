@@ -94,7 +94,8 @@ def mesh_generator(Lx, Ly, Lpml, nx, ny):
 
 
 
-def stable_dx(max_velocity, max_omega_p):
-    wl_min = max_velocity / (1.636567 * max_omega_p)
-    return wl_min / 8
+def stable_dx(min_velocity, max_omega_p):
+    wl_min = min_velocity / (1.636567 * max_omega_p)
+    elements_per_wl = 8
+    return wl_min / elements_per_wl
    

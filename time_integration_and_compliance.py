@@ -46,4 +46,8 @@ def compliance(sigma, u, mu, lmbda):
     return sigma / (2 * mu) - lmbda / (4 * mu * (lmbda + mu)) * tr(sigma) * Identity(u.geometric_dimension())
 
 def stable_dt(dx, c_p):
-    return dx / c_p
+    cfl_constant = 0.3125
+    return cfl_constant * dx / c_p
+
+def cfl_constant(v, dt, dx):
+    return dt * v / dx

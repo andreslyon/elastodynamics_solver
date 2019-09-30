@@ -1,0 +1,37 @@
+MEDIUM PARAMETERS
+
+Material properties of crystaline_rock_1
+lambda = 9450000000.0
+mu = 16875000000.0
+Cp = 4000.0
+Cs = 2500.0
+
+Material properties of crystaline_rock_1
+lambda = 9450000000.0
+mu = 16875000000.0
+Cp = 4000.0
+Cs = 2500.0
+
+Material properties of crystaline_rock_1
+lambda = 9450000000.0
+mu = 16875000000.0
+Cp = 4000.0
+Cs = 2500.0
+
+
+MESH
+Lx [m]= 10.0
+Ly [m]= 10.0
+Lpml [m]= 1.0
+dx [m]= 19.09484915680201
+PULSES
+
+Pulse Type: Modified Ricker Pulse
+Peak frequency [rad/s]: 62.83185307179586
+Amplitude [_]: 5000.0
+center [m]: 0.0
+
+TIME
+dt [s]: 1.953125e-05
+Final time [s]: 1.0
+Execution time [m]: 768.8325632810593

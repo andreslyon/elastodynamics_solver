@@ -1,0 +1,28 @@
+MEDIUM PARAMETERS
+
+Material properties of try_material_0
+lambda = 49508.94666666665
+mu = 74263.42
+Cp = 9.487690270380176
+Cs = 5.81
+
+Material properties of try_material_0
+lambda = 49508.94666666665
+mu = 74263.42
+Cp = 9.487690270380176
+Cs = 5.81
+
+Material properties of try_material_0
+lambda = 49508.94666666665
+mu = 74263.42
+Cp = 9.487690270380176
+Cs = 5.81
+
+
+MESH
+Lx [m]= 10.0
+Ly [m]= 10.0
+Lpml [m]= 1.0
+dx [m]= 0.18116601455936754
+PULSES
+

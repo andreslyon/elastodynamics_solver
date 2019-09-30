@@ -1,0 +1,28 @@
+MEDIUM PARAMETERS
+
+Material properties of soft_rock_0
+lambda = 336000000.0
+mu = 600000000.0
+Cp = 800.0
+Cs = 500.0
+
+Material properties of soft_rock_0
+lambda = 336000000.0
+mu = 600000000.0
+Cp = 800.0
+Cs = 500.0
+
+Material properties of soft_rock_0
+lambda = 336000000.0
+mu = 600000000.0
+Cp = 800.0
+Cs = 500.0
+
+
+MESH
+Lx [m]= 100.0
+Ly [m]= 40.0
+Lpml [m]= 10.0
+dx [m]= 15.27587932544161
+PULSES
+

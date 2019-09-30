@@ -10,10 +10,11 @@ from dolfin.fem.assembling import assemble
 from ufl import (as_tensor, Measure, lhs, rhs, inner, grad, exp, tr, Identity)
 import numpy as p
 import matplotlib.pyplot as plt
+import os
 
 def modified_ricker_pulse(w_p, t):
-    return ((0.25) * (t ** 2 - 0.5)* p.exp(-0.25 * t ** 2) - 13*p.exp(-13.5)) / (0.5 + 13*p.exp(13.5))
-
+    return p.piecewise(t, [ t <= 6*p.sqrt(6)/w_p, t > 6*p.sqrt(6)/w_p], [lambda t:  
+      ((0.25) * ((w_p*t -3 * p.sqrt(6)) ** 2 - 0.5)* p.exp(-0.25 * (w_p*t -3 * p.sqrt(6)) ** 2) - 13*p.exp(-13.5)) / (0.5 + 13*p.exp(13.5)), lambda t: 0])
 def ricker_wavelet(w_p, t):
     x = 0.5 *(w_p ** 2) * (t ** 2)
     return 0.001*(1 - x) * p.exp(- x)
@@ -55,6 +56,7 @@ class ModifiedRickerPulse(UserExpression):
 
 
 
+
 class ClassicRickerPulse(UserExpression):
   def __init__(self, t, omega, amplitude, center=0, **kwargs):
     super().__init__(**kwargs)
@@ -80,28 +82,39 @@ class ClassicRickerPulse(UserExpression):
     return info
 
 
-class Sine(UserExpression):
-  def __init__(self, t, freq, amplitude, **kwargs):
+class Cosine(UserExpression):
+  def __init__(self, t, omega, amplitude, center=0, **kwargs):
       super().__init__(**kwargs)
       self.t  = t
-      self.freq  =  2 * p.pi * freq # rads/s
+      self.omega  =  2 * p.pi * omega # rads/s
       self.amplitude = amplitude
+      self.center = center
 
-  def eval(values, x):
-    values[0] = 0
-    values[1] = self.amplitude * p.sin(self.freq * t)
+  def eval(self, values, x):
+    if abs(x[0] - self.center) < 0.25:
+      values[0] = 0
+      values[1] = self.amplitude * p.cos(self.omega * self.t)
+    else:
+      values[0] = 0
+      values[1] = 0
 
 
   def value_shape(self):
     return (2,)
 
+  def pulse_info(self):
+    info = "Pulse Type: Cosine\n" + "Peak frequency [rad/s]: {}\n".format(self.omega) + "Amplitude [_]: {}\n".format(self.amplitude) + "center [m]: {}\n".format(self.center)
+    return info
+
 
 if __name__ == "__main__":
-    w_p = 10
+    w_0 = 2 * p.pi * 10
+    w_1 = 2 * p.pi * 1
 
-    T = p.arange(0, 200, 0.01)
-    #plt.plot(T,ricker_wavelet(w_p, T))
-    plt.plot(T,F_ricker_wavelet(100, T))
+    T = p.arange(0, 1, 0.01)
+
+    plt.plot(T,modified_ricker_pulse(w_0, T),color="red")
+    plt.plot(T,modified_ricker_pulse(w_1, T),color="blue")
 
     plt.show()
 
