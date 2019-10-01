@@ -59,6 +59,23 @@ class TwoLayeredProperties(UserExpression):
       value[0] = self.property_1
         
 
+#  =========== HETEROGEnEOUS DOMAIn ========= #
+
+
+class Layer(SubDomain):
+  def __init__(self, Lx, Ly, Lpml, layer_start, layer_end,**kwargs):
+    super().__init__(**kwargs)
+    self.Lx = Lx
+    self.Ly = Ly
+    self.Lpml = Lpml
+    self.layer_start = layer_start
+    self.layer_end = layer_end
+    self.tol = 10e-14
+
+  def inside(self, x, on_boundary):
+    return self.layer_start - self.tol <= abs(x[1]) <= self.layer_end + self.tol
+
+
 # Update previous time step using Newmark scheme
 
 # Dirichlet boundary

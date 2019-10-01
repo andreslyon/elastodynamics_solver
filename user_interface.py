@@ -27,7 +27,7 @@ def input_sources(l, Lx, character_length, n_chars):
     return sources_positions
 
 
-def save_info_oblique(file_name, materials, pulses, t_end, exec_time, h, dt, Lx, Ly, Lpml):
+def save_info_oblique(file_name, materials, pulses, t_end, exec_time, used_h, stable_hx, dt, cfl_ct, Lx, Ly, Lpml):
     with open(file_name,"w") as file:
         file.write("MEDIUM PARAMETERS\n")
         for material in materials:
@@ -39,7 +39,8 @@ def save_info_oblique(file_name, materials, pulses, t_end, exec_time, h, dt, Lx,
         file.write("Lx [m]= {}\n".format(Lx))
         file.write("Ly [m]= {}\n".format(Ly))
         file.write("Lpml [m]= {}\n".format(Lpml))
-        file.write("dx [m]= {}\n".format(h))
+        file.write("used hx [m]= {}\n".format(used_h))
+        file.write("stae hx [m]= {}\n".format(stable_hx))
         
 
         file.write("PULSES\n")
@@ -49,6 +50,7 @@ def save_info_oblique(file_name, materials, pulses, t_end, exec_time, h, dt, Lx,
 
         file.write("\nTIME\n")
         file.write("dt [s]: {}\n".format(dt))
+        file.write("CFL constant: {}\n".format(cfl_ct))
 
         file.write("Final time [s]: {}\n".format(t_end))
         file.write("Execution time [m]: {}\n".format(exec_time))

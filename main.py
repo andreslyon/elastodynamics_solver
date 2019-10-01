@@ -22,29 +22,40 @@ from pulses import (ClassicRickerPulse, ModifiedRickerPulse, Cosine)
 if __name__ == "__main__":
         
     Lx = float(input("Enter Lx [m]: "))
-    Ly = float(input("Enter Ly [m]: "))
+    Ly = float(input("Enter Ly ( < Lx ) [m]: "))
+    Lx_ly_prop = Lx / Ly
     Lpml = Lx / 10
     n_sources, character_length, m_char = soil_and_pulses_print(Lx, Lpml)
     sources_positions = input_sources(n_sources, Lx, character_length, m_char)
 
     omega_p_list = []
+
     amplitude_list = []
     for i in range(len(sources_positions)):
         amplitude_list.append(float(input("Amplitude of source at {} [m]: ".format(sources_positions[i]))))
         omega_p_list.append(float(input("Peak freq. of source at {} [Hz]: ".format(sources_positions[i]))))
+    
+    max_omega_p = max(omega_p_list)
 
-    type_of_medium = "oblique"
+
+    type_of_medium = str(input("Enter type of medium (het / hom / obl):  "))
     materials_data = read_materials()
     print_materials()
     materials = []
 
-    for _ in range(3):
-        material_id = int(input("Enter id od material: "))
-        materials.append(MaterialFromVelocities(*materials_data[material_id]))
-    materials[0].print()
-    max_omega_p = max(omega_p_list)
+    if type_of_medium == "het":
+        type_of_medium = "heterogeneous"
+    elif type_of_medium == "hom":
+        type_of_medium = "homogeneous"
+    elif type_of_medium == "obl":
+        type_of_medium = "oblique"
+
+    if (type_of_medium == "oblique") or (type_of_medium == "heterogeneous"):
+
+        for _ in range(3):
+            material_id = int(input("Enter id of material: "))
+            materials.append(MaterialFromVelocities(*materials_data[material_id]))
     
-    if type_of_medium == "oblique":
         lambdas = [material.lbda for material in materials]
         rhos = [material.rho for material in materials]
         mus =  [material.mu for material in materials]
@@ -53,31 +64,43 @@ if __name__ == "__main__":
         rho = ObliqueLayers(rhos)
         mu = ObliqueLayers(mus)
 
+    else:
+        material_id = int(input("Enter id of material: "))
+        materials.append(MaterialFromVelocities(*materials_data[material_id]))
+        lmbda = Constant(materials[0].lbda)
+        rho = Constant(materials[0].rho)
+        mu = Constant(materials[0].mu)
+
+
+
 
     # ================= MESH  ================= #
 
     max_velocity = max([material.c_p for material in materials])
-    min_velocity = min([material.c_s for material in materials])
+    min_velocity = min([material.c_p for material in materials])
 
     max_omega_p = max(omega_p_list)
 
     #print("omega p : ", max_omega_p)
-    stable_hx = stable_dx(min_velocity, max_omega_p)
+    stable_hx = stable_dx(max_velocity, max_omega_p)
     
     nx = int(Lx / stable_hx) + 1
     print(nx)
-    #nx = max(nx, 70)
-    ny = int(Ly / stable_hx) + 1
-    #ny = max(ny, 70)
+    nx = max(nx, 60)
+    #ny = int(Ly / stable_hx) + 1
+    ny = int(Ly * nx / Lx) +1
+    #ny = max(ny, 60)
     mesh = mesh_generator(Lx, Ly, Lpml, nx, ny)
-    #used_hx = Lx / nx
+    used_hx = Lx / nx
 
-    dt      =  stable_dt(stable_hx, max_velocity) #* 0.1
+    dt      =  stable_dt(used_hx, max_velocity)
     print("dt: ", dt)
     print("hx: ", stable_hx)
-    #print("used hx: ", used_hx)
+    print("used hx: ", used_hx)
     print("nx: ", nx)
-    print("ACTUAL CFL: {}\n".format(cfl_constant(max_velocity,dt,stable_hx)))
+    print("ny: ", ny)
+    cfl_ct = cfl_constant(max_velocity, dt, used_hx)
+    print("ACTUAL CFL: {}\n".format(cfl_ct))
 
 
     t_end   = float(input("Enter final time [s]: "))
@@ -122,7 +145,7 @@ if __name__ == "__main__":
     M = W.sub(1).collapse()
     
     V_r = max_velocity#10
-    car_dim = 0.1
+    car_dim = stable_hx
     m = 2 
     R = 10e-8
 
@@ -160,9 +183,9 @@ if __name__ == "__main__":
     ds = Measure("ds", subdomain_data=ff, domain=mesh)
 
 
-    a_ = alpha_1*alpha_2
-    b_ = alpha_1*beta_2 + alpha_2*beta_1
-    c_ = beta_1*beta_2
+    a_ = alpha_1 * alpha_2
+    b_ = alpha_1 * beta_2 + alpha_2*beta_1
+    c_ = beta_1 * beta_2
 
     Lambda_e = as_tensor([[alpha_2, 0],[0, alpha_1]])
     Lambda_p = as_tensor([[beta_2, 0],[0, beta_1]])
@@ -241,13 +264,13 @@ if __name__ == "__main__":
 
         t += float(dt)
 
-        if rank == 0:
+        if rank == 0 and rec_counter % 10 == 0:
             print('\n\rtime: {:.3f} (Progress: {:.2f}%)'.format(t, 100 * t / t_end),)
             print("time taken til this point: {}".format(time.time()-t0))
-        # Update source term
-        #f.t = t
+
         for pulse in pulses:
             pulse.t = t
+
         g = sum(pulses)
 
         # Assemble rhs and apply boundary condition      
@@ -278,7 +301,7 @@ if __name__ == "__main__":
     t_f = (time.time() - t0) / 60
 
     save_info_oblique(info_file_name, materials, pulses, 
-                      t_end, t_f, stable_hx, dt, Lx, Ly, Lpml)
+                      t_end, t_f, used_hx, stable_hx, dt, cfl_ct, Lx, Ly, Lpml)
 
     print('\007')
     print('\007')

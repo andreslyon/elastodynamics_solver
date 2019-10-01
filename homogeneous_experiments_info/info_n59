@@ -1,0 +1,27 @@
+MEDIUM PARAMETERS
+
+Material properties of lime_1
+lambda = 189000000.0
+mu = 243000000.0
+Cp = 500.0
+Cs = 300.0
+
+
+MESH
+Lx [m]= 100.0
+Ly [m]= 40.0
+Lpml [m]= 10.0
+used hx [m]= 1.6666666666666667
+stae hx [m]= 9.547424578401007
+PULSES
+
+Pulse Type: Modified Ricker Pulse
+Peak frequency [rad/s]: 25.132741228718345
+Amplitude [_]: 5000.0
+center [m]: 1.0
+
+TIME
+dt [s]: 0.0010416666666666667
+CFL constant: 0.3125
+Final time [s]: 1.0
+Execution time [m]: 1.6767711480458578
