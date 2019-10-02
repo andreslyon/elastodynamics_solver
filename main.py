@@ -196,7 +196,7 @@ if __name__ == "__main__":
     (u, S) = TrialFunctions(W)
     (w, T) = TestFunctions(W)
 
-    pulses = [ModifiedRickerPulse(t,omega_p_list[i], amplitude_list[i],center=sources_positions[i]) for i in range(len(omega_p_list))] 
+    pulses = [ModifiedRickerPulse(t,omega_p_list[i], amplitude_list[i], center=sources_positions[i]) for i in range(len(omega_p_list))] 
     
     g = sum(pulses)
 
@@ -225,7 +225,7 @@ if __name__ == "__main__":
     experiment_count_file.close()
 
     paraview_file_name = "experiment_{}".format(experiment_count)
-    info_file_name = "{}_experiments_info/info_n{}".format(type_of_medium,experiment_count)
+    info_file_name = "{}_experiments_info/info_n{}.txt".format(type_of_medium,experiment_count)
 
     experiment_count += 1
     experiment_count_file = open("experiment_counter",'wb')
@@ -240,10 +240,7 @@ if __name__ == "__main__":
     rec_counter = 0
 
     t0 = time.time()
-
     while t < t_end - 0.5 * dt:
-
-
         t += float(dt)
 
         if rank == 0 and rec_counter % 10 == 0:
@@ -252,14 +249,12 @@ if __name__ == "__main__":
 
         for pulse in pulses:
             pulse.t = t
-
         g = sum(pulses)
 
         # Assemble rhs and apply boundary condition      
         b = assemble(L)
         bc.apply(A, b)
         
-
         # Compute solution
         solver.solve(S.vector(), b)
         (u, U) = S.split(True)
@@ -268,23 +263,17 @@ if __name__ == "__main__":
         update(u, u0, v0, a0, beta, gamma, dt)
         update(U, U0, V0, A0, beta, gamma, dt)
 
-        #  time_array_x, time_array_y = time_to_pml_border(u_s_0, u0, time_array_x,time_array_y, t, Lx, Ly, n)
-        # Save solution to XDMF file format
-        
-        #xdmf_file.write(u, t)
         if rec_counter % 2 == 0:
-
             pvd << (u0, t)
+
         rec_counter += 1
         energy = inner(u, u) * dx
         E = assemble(energy)
-        print("E = ",E)
-
+        print("E = ", E)
     t_f = (time.time() - t0) / 60
 
     save_info_oblique(info_file_name, materials, pulses, 
                       t_end, t_f, used_hx, stable_hx, dt, cfl_ct, Lx, Ly, Lpml)
-
     print('\007')
     print('\007')
     print('\007')
