@@ -26,6 +26,22 @@ def input_sources(l, Lx, character_length, n_chars):
     sources_positions = [7 * character_length * j + i  for j in source_positions_inputs]
     return sources_positions
 
+def type_of_medium_input():
+    type_of_medium = str(input("Enter type of medium\n"+
+                            " Heterogeneous = 0\n"  +
+                            " Homomogeneous = 1\n " +
+                            " Oblique       = 2\n " +
+                            " Choose:  "))
+    print(type_of_medium)
+    if type_of_medium == "0":
+        type_of_medium = "heterogeneous"
+    elif type_of_medium == "1":
+        type_of_medium = "homogeneous"
+    elif type_of_medium == "2":
+        type_of_medium = "oblique"
+    return type_of_medium
+
+
 
 def save_info_oblique(file_name, materials, pulses, t_end, exec_time, used_h, stable_hx, dt, cfl_ct, Lx, Ly, Lpml):
     with open(file_name,"w") as file:
@@ -40,7 +56,7 @@ def save_info_oblique(file_name, materials, pulses, t_end, exec_time, used_h, st
         file.write("Ly [m]= {}\n".format(Ly))
         file.write("Lpml [m]= {}\n".format(Lpml))
         file.write("used hx [m]= {}\n".format(used_h))
-        file.write("stae hx [m]= {}\n".format(stable_hx))
+        file.write("stable hx [m]= {}\n".format(stable_hx))
         
 
         file.write("PULSES\n")
@@ -53,7 +69,7 @@ def save_info_oblique(file_name, materials, pulses, t_end, exec_time, used_h, st
         file.write("CFL constant: {}\n".format(cfl_ct))
 
         file.write("Final time [s]: {}\n".format(t_end))
-        file.write("Execution time [m]: {}\n".format(exec_time))
+        file.write("Execution time [min]: {}\n".format(exec_time))
 
 if __name__ == "__main__":
 

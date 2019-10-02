@@ -63,7 +63,7 @@ class TwoLayeredProperties(UserExpression):
 
 
 class Layer(SubDomain):
-  def __init__(self, Lx, Ly, Lpml, layer_start, layer_end,**kwargs):
+  def __init__(self, Lx, Ly, Lpml, layer_start, layer_end, **kwargs):
     super().__init__(**kwargs)
     self.Lx = Lx
     self.Ly = Ly
@@ -75,6 +75,24 @@ class Layer(SubDomain):
   def inside(self, x, on_boundary):
     return self.layer_start - self.tol <= abs(x[1]) <= self.layer_end + self.tol
 
+class MaterialProperty(UserExpression):
+  def __init__(self, prop_0, prop_1, subdomains,**kwargs):
+    super().__init__(**kwargs)
+    self.subdomains = subdomains
+    self.prop_0 = prop_0
+    self.prop_1 = prop_1
+    #self._ufl_shape = ()
+
+    #self._count = 0
+  def eval_cell(self, values, x, cell):
+    if self.subdomains[cell.index] == 0:
+      values[0] = self.prop_0
+    else:
+      values[0] = self.prop_1
+  def value_shape(self):
+    return ()
+
+  
 
 # Update previous time step using Newmark scheme
 
@@ -115,4 +133,6 @@ def stable_dx(min_velocity, max_omega_p):
     wl_min = min_velocity / (1.636567 * max_omega_p)
     elements_per_wl = 8
     return wl_min / elements_per_wl
-   
+
+if __name__ == "__main__":
+  pass
