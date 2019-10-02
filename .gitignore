@@ -2,6 +2,7 @@
 **/*.vtu
 **/*.h5
 **/*.xdmf
+**/*.txt
 heterogeneous_experiments_info/
 oblique_experiments_info/
 homogeneous_experiments_info/
