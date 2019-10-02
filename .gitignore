@@ -2,6 +2,6 @@
 **/*.vtu
 **/*.h5
 **/*.xdmf
-/heterogeneous_experiments_info
-/oblique_experiments_ingo
-/homogeneous_experiments_ingo
+heterogeneous_experiments_info/
+oblique_experiments_info/
+homogeneous_experiments_info/
