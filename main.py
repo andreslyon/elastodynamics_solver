@@ -10,7 +10,7 @@ from dolfin.fem.assembling import assemble
 from ufl import (as_tensor, Measure, lhs, rhs, inner, grad, exp, tr, Identity)
 from time_integration_and_compliance import (N_dot, N_ddot, compliance, stable_dt, update, cfl_constant)
 from domain_and_layers import (mesh_generator, stable_dx, ObliqueLayers, MultiLayer, TwoLayeredProperties, Dirichlet,
-                               Circle, Layer, MaterialProperty)
+                               Circle, Layer, ObliqueLayer, MaterialProperty)
 from materials import (Material, MaterialFromVelocities, read_materials, print_materials)
 from user_interface import (soil_and_pulses_print, input_sources, save_info_oblique, type_of_medium_input)
 from pml_functions import (alpha_0, alpha_1, alpha_2, beta_0, beta_1, beta_2)
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
 
     if (type_of_medium == "oblique"):
-        for _ in range(3):
+        for _ in range(2):
             material_id = int(input("Enter id of material: "))
             materials.append(MaterialFromVelocities(*materials_data[material_id]))
     
@@ -55,9 +55,7 @@ if __name__ == "__main__":
         rhos = [material.rho for material in materials]
         mus =  [material.mu for material in materials]
 
-        lmbda = ObliqueLayers(lambdas)
-        rho = ObliqueLayers(rhos)
-        mu = ObliqueLayers(mus)
+
 
     elif type_of_medium == "homogeneous":
         material_id = int(input("Enter id of material: "))
@@ -111,12 +109,33 @@ if __name__ == "__main__":
         subdomain_1.mark(subdomains, 1)
 
 
-        lmbda = MaterialProperty(lambdas[0], lambdas[1], subdomains=subdomains,degree=0)
-        rho = MaterialProperty(rhos[0], rhos[1], subdomains=subdomains,degree=0)
-        mu =  MaterialProperty(mus[0], mus[1], subdomains=subdomains,degree=0)
+        lmbda = MaterialProperty(lambdas[0], lambdas[1], subdomains=subdomains, degree=0)
+        rho = MaterialProperty(rhos[0], rhos[1], subdomains=subdomains, degree=0)
+        mu =  MaterialProperty(mus[0], mus[1], subdomains=subdomains, degree=0)
         
         # MEASURE
         dx = Measure("dx", domain=mesh, subdomain_data=subdomains)
+
+    elif type_of_medium == "oblique":
+        layer_start_0 = 0
+        layer_start_1 = layer_end_0 = Ly / 2
+        layer_end_1 = Ly + Lpml
+
+        layer_start_slope_0 = 0
+        layer_start_slope_1 = layer_end_slope_0 = 1 / 3
+        layer_end_slope_1 = 0
+
+        subdomain_0 = ObliqueLayer(Lx, Ly, Lpml, layer_start_0, layer_end_0, layer_start_slope_0, layer_end_slope_0)
+        subdomain_1 = ObliqueLayer(Lx, Ly, Lpml, layer_start_1, layer_end_1, layer_start_slope_1, layer_end_slope_1)
+        subdomains = MeshFunction("size_t", mesh, 2, 0)
+        subdomain_0.mark(subdomains, 0)
+        subdomain_1.mark(subdomains, 1)
+
+        lmbda = MaterialProperty(lambdas[0], lambdas[1], subdomains=subdomains, degree=0)
+        rho = MaterialProperty(rhos[0], rhos[1], subdomains=subdomains, degree=0)
+        mu =  MaterialProperty(mus[0], mus[1], subdomains=subdomains, degree=0)
+        dx = Measure("dx", domain=mesh, subdomain_data=subdomains)
+       
     else:
         dx = Measure("dx", domain=mesh)
 
@@ -274,6 +293,9 @@ if __name__ == "__main__":
 
     save_info_oblique(info_file_name, materials, pulses, 
                       t_end, t_f, used_hx, stable_hx, dt, cfl_ct, Lx, Ly, Lpml)
+    #print(type(u))
+    #print(u.shape)
+
     print('\007')
     print('\007')
     print('\007')

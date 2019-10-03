@@ -75,6 +75,24 @@ class Layer(SubDomain):
   def inside(self, x, on_boundary):
     return self.layer_start - self.tol <= abs(x[1]) <= self.layer_end + self.tol
 
+class ObliqueLayer(SubDomain):
+  def __init__(self, Lx, Ly, Lpml, layer_start, layer_end, layer_start_slope, layer_end_slope, **kwargs):
+    super().__init__(**kwargs)
+    self.layer_start = layer_start
+    self.layer_end = layer_end
+    self.m_0 = layer_start_slope
+    self.m_1 = layer_end_slope
+    self.tol = 10e-14
+
+  def inside(self, x, on_boundary):
+    m0_x = self.m_0 * x[0]
+    m1_x = self.m_1 * x[0]
+
+    return (m0_x - self.layer_start - self.tol >= x[1]) and (x[1] >= m1_x - self.layer_end + self.tol)
+
+
+
+
 class MaterialProperty(UserExpression):
   def __init__(self, prop_0, prop_1, subdomains,**kwargs):
     super().__init__(**kwargs)
