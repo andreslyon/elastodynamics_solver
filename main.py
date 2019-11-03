@@ -85,7 +85,7 @@ if __name__ == "__main__":
     ny = int(Ly * nx / Lx) +1
     mesh = mesh_generator(Lx, Ly, Lpml, nx, ny)
     used_hx = Lx / nx
-    dt      =  stable_dt(used_hx, max_velocity)
+    dt = stable_dt(used_hx, max_velocity)
     cfl_ct = cfl_constant(max_velocity, dt, used_hx)
 
     V_r = max_velocity
@@ -293,8 +293,6 @@ if __name__ == "__main__":
 
     save_info_oblique(info_file_name, materials, pulses, 
                       t_end, t_f, used_hx, stable_hx, dt, cfl_ct, Lx, Ly, Lpml)
-    #print(type(u))
-    #print(u.shape)
 
     print('\007')
     print('\007')

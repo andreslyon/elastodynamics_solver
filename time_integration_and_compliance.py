@@ -44,41 +44,6 @@ def update(u, u0, v0, a0, beta, gamma, dt):
 def compliance(sigma, u, mu, lmbda):
     return sigma / (2 * mu) - lmbda / (4 * mu * (lmbda + mu)) * tr(sigma) * Identity(u.geometric_dimension())
 
-class Compliance(UserExpression):
-    def __init__(self, sigma, u, mu, lmbda, subdomains, **kwargs):
-        super().__init__(**kwargs)
-        self.subdomains = subdomains
-        self.sigma = sigma
-        self.u = u
-        self.mu = mu
-        self.lmbda = lmbda
-        self._ufl_shape = (2,2)
-        #self._count = 0
-    def eval_cell(self, values, x, cell):
-        m = self.mu.eval_cell(x, cell)
-        l = self.lmbda.evall_cell(x, cell)
-
-        C = self.sigma / (2 *  m) -  l / (4 *  m * (l + m)) * tr(self.sigma) * Identity(self.u.geometric_dimension())
-        print(C)
-
-        #C = self.sigma / (2 *  self.mu) -  self.lmbda / (4 *  self.mu *
-         #( self.lmbda +  self.mu)) * tr( self.sigma) * Identity( self.u.geometric_dimension())
-        print(type(values))
-        print(type(C))
-
-        time.sleep(10)
-
-        #print(C[0,0])
-        #time.sleep(10)
-        
-        ##values[0][0] = C[0, 0]
-        #values[0][1] = C[0, 1]
-        #values[1][0] = C[1, 0]
-        #values[1][1] = C[1, 1]
-
-    def value_shape(self):
-        return (2, 2)  
-
 def stable_dt(dx, c_p):
     cfl_constant = 0.3125
     return cfl_constant * dx / c_p
