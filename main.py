@@ -24,7 +24,6 @@ if __name__ == "__main__":
         
     Lx = float(input("Enter Lx [m]: "))
     Ly = float(input("Enter Ly ( < Lx ) [m]: "))
-    Lx_ly_prop = Lx / Ly
     Lpml = Lx / 10
     n_sources, character_length, m_char = soil_and_pulses_print(Lx, Lpml)
     sources_positions = input_sources(n_sources, Lx, character_length, m_char)
@@ -215,7 +214,7 @@ if __name__ == "__main__":
     (u, S) = TrialFunctions(W)
     (w, T) = TestFunctions(W)
 
-    pulses = [ModifiedRickerPulse(t,omega_p_list[i], amplitude_list[i], center=sources_positions[i]) for i in range(len(omega_p_list))] 
+    pulses = [ModifiedRickerPulse(t, omega_p_list[i], amplitude_list[i], center=sources_positions[i]) for i in range(len(omega_p_list))] 
     
     g = sum(pulses)
 
@@ -252,10 +251,11 @@ if __name__ == "__main__":
     pickle.dump(experiment_count,experiment_count_file)
     experiment_count_file.close()
 
-    
-    xdmf_file = XDMFFile(mesh.mpi_comm(), "output/elastodynamics.xdmf")
+
     pvd  = File("paraview_{}/{}.pvd".format(type_of_medium,paraview_file_name))
+    
     pvd << (u0, t)
+    
     rec_counter = 0
 
     t0 = time.time()
@@ -282,8 +282,7 @@ if __name__ == "__main__":
         update(u, u0, v0, a0, beta, gamma, dt)
         update(U, U0, V0, A0, beta, gamma, dt)
 
-        if rec_counter % 2 == 0:
-            pvd << (u0, t)
+        pvd << (u0, t)
 
         rec_counter += 1
         energy = inner(u, u) * dx

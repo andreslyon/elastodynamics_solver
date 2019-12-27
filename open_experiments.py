@@ -1,6 +1,6 @@
 import os
 import sys
-from dolfin import (MPI, SubDomain, UserExpression, VectorElement, TensorElement,
+from dolfin import (MPI, SubDomain, UserExpression, Expression, VectorElement, TensorElement,
                     MixedElement, FiniteElement, Function, FunctionSpace,
                     RectangleMesh, MeshFunction, TestFunctions, TrialFunctions,
                     DirichletBC, parameters, set_log_level, LogLevel, Point,
@@ -18,24 +18,14 @@ from pulses import (ClassicRickerPulse, ModifiedRickerPulse, Cosine)
 import numpy as p
 import time
 import pickle
-from forward_problem import forward
-from dolfin_adjoint import *
-
-
-    
 
 
 
+mesh = mesh_generator(10,10,1,20,20)
+FE = FunctionSpace(mesh, "DG", 0)
+
+mu   = interpolate(Expression("1000000*(80.0 + 80.0*(x[1]<=-15) - 40.0*(x[1]<=-30))", degree=0), FE)    # MPa
 
 
-
-
-
-
-
-
-
-
-
-
-
+y = mu.vector()
+print(p.shape(y))

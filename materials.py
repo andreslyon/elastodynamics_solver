@@ -40,12 +40,14 @@ class MaterialFromVelocities:
         print("mu = {}".format(self.mu))
         print("Cp = {}".format(self.c_p))
         print("Cs = {}".format(self.c_s))
+        print("Rho = {}".format(self.rho))
+
 
     def info(self):
-        return "Material properties of {}".format(self.name) + "\n" + "lambda = {}\n".format(self.lbda) +\
+        return "Material properties of {}".format(self.name) + "\n" + "lambda = {}\n".format(self.lbda) + \
         "mu = {}\n".format(self.mu) + \
         "Cp = {}\n".format(self.c_p) + \
-        "Cs = {}\n".format(self.c_s)
+        "Cs = {}\n".format(self.c_s)        
 
 
 def read_materials():
@@ -72,3 +74,16 @@ def print_materials():
     for mat,i in zip(data,range(len(data))):
         print("{}      {}         {}           {}         {}".format(i,mat[0],mat[1],mat[2],mat[3]))
 
+
+def cp(mu, lmbda, rho):
+    num = lmbda + 2*mu
+    return p.sqrt(num / rho)
+
+def cs(mu, rho):
+    return p.sqrt(mu / rho)
+
+
+if __name__ == "__main__":
+    materials_data = read_materials()
+    material1 = MaterialFromVelocities(*materials_data[13])
+    material1.print()
